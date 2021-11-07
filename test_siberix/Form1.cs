@@ -14,9 +14,12 @@ namespace test_siberix
 {
     public partial class Form1 : Form
     {
-        Repository repository = new Repository();
+        Repository repository;
+        Service service;
         public Form1()
         {
+            repository = new Repository();
+            service = new Service(repository);
             InitializeComponent();
         }
 
@@ -34,5 +37,15 @@ namespace test_siberix
             repository.AddRoad(2, 1, 15);
         }
 
+        private void GetRepositoryInfo_Button_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(repository.ToString());
+        }
+
+        private void InitialData_Button_Click(object sender, EventArgs e)
+        {
+            InitialCities();
+            InitialRoads();
+        }
     }
 }

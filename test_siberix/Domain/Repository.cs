@@ -19,7 +19,7 @@ namespace test_siberix.Domain
         /// <summary>
         /// List of Cities
         /// </summary>
-        List<City> Cities { get; set; }
+        public List<City> Cities { get; set; }
 
         /// <summary>
         /// Add City in the List of Cities
@@ -40,7 +40,17 @@ namespace test_siberix.Domain
         }
 
         /// <summary>
-        /// Find and return City by id.
+        /// Updates the element with id equals _city's id to _city
+        /// </summary>
+        /// <param name="_city"></param>
+        public void UpdateCity(City _city)
+        {
+            int index = Cities.IndexOf(GetCityById(_city.Id));
+            Cities[index] = _city;
+        }
+
+        /// <summary>
+        /// Finds and returns City by id.
         /// Algorithm complexity: O(n)
         /// </summary>
         /// <param name="_id"></param>
@@ -65,6 +75,7 @@ namespace test_siberix.Domain
             if (citySend.Id == -1) throw new Exception("City with id: " + _citySendingId.ToString() + " was not found!");
             if (cityArrival.Id == -1) throw new Exception("City with id: " + _cityArrivalId.ToString() + " was not found!");
 
+            if (citySend.NearbyCities == null) citySend.NearbyCities = new List<CityNode>();
             citySend.NearbyCities.Add(new CityNode(cityArrival, _distance));
         }
 
@@ -73,16 +84,11 @@ namespace test_siberix.Domain
             //pass
         }
 
-        public void InitialCities()
+        public override string ToString()
         {
-            AddCity(new City(1, true));
-            AddCity(new City(2, false));
-            AddCity(new City(3, true));
-        }
-
-        public void InitialRoads()
-        {
-            
+            string retStr = "Count of cities in the base: " + Cities.Count.ToString() + "\n";
+            foreach (City city in Cities) retStr += city.ToString() + "\n";
+            return retStr;
         }
     }
 }

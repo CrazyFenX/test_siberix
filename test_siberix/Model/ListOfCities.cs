@@ -20,7 +20,7 @@ namespace test_siberix.Model
             while (current != null)
             {
                 yield return current.Distance;
-                current = current.Next;
+                //current = current.Next;
             }
         }
     }
