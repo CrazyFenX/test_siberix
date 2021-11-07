@@ -8,6 +8,7 @@ namespace test_siberix.Model
 {
     class City
     {
-
+        public int Id { get; set; }
+        public bool IsStock { get; set; }
     }
 }
