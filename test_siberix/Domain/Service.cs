@@ -20,22 +20,27 @@ namespace test_siberix.Domain
             repository = _repository;
         }
 
-        public void GetOptimalRoute(int _id)
+        public ReturnStruct GetOptimalRoute(int _id)
         {
             uint OptimalRoutLength = 0;
             List<int> RouteCitiesIds = new List<int>();
             City inputCity = repository.GetCityById(_id);
 
-            //recursive traversal
-            //foreach (CityNode cityNode in inputCity.NearbyCities)
-            //{
+            if (inputCity.IsStock) return new ReturnStruct(inputCity.Id, OptimalRoutLength,RouteCitiesIds.ToArray(), inputCity.IsStock);
+
             List<int>[] resultMass = new List<int>[inputCity.NearbyCities.Count];
-            int[] lengthsMass = new int[inputCity.NearbyCities.Count];
+            uint[] lengthsMass = new uint[inputCity.NearbyCities.Count];
             for (int i = 0; i < inputCity.NearbyCities.Count; i++)
             {
                 resultMass[i] = new List<int>();
-                RecursiveTraversal(inputCity.NearbyCities[i].City, 0, resultMass[i]);
+                lengthsMass[i] = inputCity.NearbyCities[i].Distance;
+                RecursiveTraversal(inputCity.NearbyCities[i].City, lengthsMass[i], resultMass[i]);
             }
+
+            return new ReturnStruct(inputCity.Id, OptimalRoutLength, RouteCitiesIds.ToArray(), inputCity.IsStock);
+            //TODO #1: Cделать общий случай для поиска через рекурсию.
+            //TODO #2: Рекурсия возвращает ReturnStruct и записывает
+            //результат в статический List, из которого позже будет выбираться итоговый результат
         }
 
         ReturnStruct RecursiveTraversal(City _currentCity, uint _routeLength, List<int> _citiesIds)
