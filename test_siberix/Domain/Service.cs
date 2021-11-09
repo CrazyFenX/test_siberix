@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using test_siberix.Model;
 
 namespace test_siberix.Domain
@@ -26,17 +27,27 @@ namespace test_siberix.Domain
             City inputCity = repository.GetCityById(_id);
 
             //recursive traversal
-            foreach (CityNode cityNode in inputCity.NearbyCities)
+            //foreach (CityNode cityNode in inputCity.NearbyCities)
+            //{
+            List<int>[] resultMass = new List<int>[inputCity.NearbyCities.Count];
+            int[] lengthsMass = new int[inputCity.NearbyCities.Count];
+            for (int i = 0; i < inputCity.NearbyCities.Count; i++)
             {
-                
+                resultMass[i] = new List<int>();
+                RecursiveTraversal(inputCity.NearbyCities[i].City, 0, resultMass[i]);
             }
         }
 
         ReturnStruct RecursiveTraversal(City _currentCity, uint _routeLength, List<int> _citiesIds)
         {
-            if (_currentCity.NearbyCities.Count == 0) return new ReturnStruct(_currentCity.Id, _routeLength, _citiesIds.ToArray(), false);
-            if (_currentCity.IsStock) return new ReturnStruct(_currentCity.Id, _routeLength, _citiesIds.ToArray(), true);
-            //foreach()
+            if (_currentCity.NearbyCities.Count == 0 || _currentCity.IsStock) return new ReturnStruct(_currentCity.Id, _routeLength, _citiesIds.ToArray(), _currentCity.IsStock);
+            
+            foreach (CityNode cityNode in _currentCity.NearbyCities)
+            //for (int i = 0; i < _currentCity.NearbyCities.Count; i++)
+            {
+                RecursiveTraversal(cityNode.City, _routeLength, _citiesIds);
+            }
+            
             return new ReturnStruct();
         }
     }
@@ -54,6 +65,7 @@ namespace test_siberix.Domain
             RouteLength = _routeLength;
             CitiesIds = _citiesIds;
             IsStock = _isStock;
+            MessageBox.Show("Id: " + StockCityId.ToString() + "; RL: " + RouteLength + "; Is Stock: " + IsStock.ToString());
         }
     }
 }
