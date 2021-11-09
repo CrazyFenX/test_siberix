@@ -46,7 +46,7 @@ namespace test_siberix.Domain
         public void UpdateCity(City _city)
         {
             int index = Cities.IndexOf(GetCityById(_city.Id));
-            Cities[index] = _city;
+            if (index != -1) Cities[index] = _city;
         }
 
         /// <summary>
