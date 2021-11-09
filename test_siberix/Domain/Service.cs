@@ -14,6 +14,7 @@ namespace test_siberix.Domain
     class Service
     {
         Repository repository;
+        List<ReturnStruct> returnStructList = new List<ReturnStruct>();
 
         public Service(Repository _repository)
         {
@@ -25,8 +26,9 @@ namespace test_siberix.Domain
             uint OptimalRoutLength = 0;
             List<int> RouteCitiesIds = new List<int>();
             City inputCity = repository.GetCityById(_id);
+            returnStructList = new List<ReturnStruct>();
 
-            if (inputCity.IsStock) return new ReturnStruct(inputCity.Id, OptimalRoutLength,RouteCitiesIds.ToArray(), inputCity.IsStock);
+            if (inputCity.IsStock) return new ReturnStruct(inputCity.Id, OptimalRoutLength, RouteCitiesIds.ToArray(), inputCity.IsStock);
 
             List<int>[] resultMass = new List<int>[inputCity.NearbyCities.Count];
             uint[] lengthsMass = new uint[inputCity.NearbyCities.Count];
@@ -34,8 +36,16 @@ namespace test_siberix.Domain
             {
                 resultMass[i] = new List<int>();
                 lengthsMass[i] = inputCity.NearbyCities[i].Distance;
-                RecursiveTraversal(inputCity.NearbyCities[i].City, lengthsMass[i], resultMass[i]);
+                returnStructList.Add(RecursiveTraversal(inputCity.NearbyCities[i].City, lengthsMass[i], resultMass[i]));
             }
+
+            string retStr = "";
+            foreach (ReturnStruct tempRetStruct in returnStructList)
+            {
+                retStr += "Id: " + tempRetStruct.StockCityId.ToString() + "; RL: " + tempRetStruct.RouteLength + "; Is Stock: " + tempRetStruct.IsStock.ToString();
+            }
+
+            MessageBox.Show(retStr);
 
             return new ReturnStruct(inputCity.Id, OptimalRoutLength, RouteCitiesIds.ToArray(), inputCity.IsStock);
             //TODO #1: Cделать общий случай для поиска через рекурсию.
@@ -50,7 +60,7 @@ namespace test_siberix.Domain
             foreach (CityNode cityNode in _currentCity.NearbyCities)
             //for (int i = 0; i < _currentCity.NearbyCities.Count; i++)
             {
-                RecursiveTraversal(cityNode.City, _routeLength, _citiesIds);
+                returnStructList.Add(RecursiveTraversal(cityNode.City, _routeLength, _citiesIds));
             }
             
             return new ReturnStruct();
@@ -59,10 +69,10 @@ namespace test_siberix.Domain
 
     struct ReturnStruct
     {
-        int StockCityId; //required
-        uint RouteLength;
-        int[] CitiesIds;
-        bool IsStock;
+        public int StockCityId; //required
+        public uint RouteLength;
+        public int[] CitiesIds;
+        public bool IsStock;
 
         public ReturnStruct(int _stockCityId, uint _routeLength, int[] _citiesIds, bool _isStock)
         {
@@ -70,7 +80,8 @@ namespace test_siberix.Domain
             RouteLength = _routeLength;
             CitiesIds = _citiesIds;
             IsStock = _isStock;
-            MessageBox.Show("Id: " + StockCityId.ToString() + "; RL: " + RouteLength + "; Is Stock: " + IsStock.ToString());
+            MessageBox.Show(StockCityId.ToString() + "; RL: " + RouteLength + "; Is Stock: " + IsStock.ToString());
+
         }
     }
 }
