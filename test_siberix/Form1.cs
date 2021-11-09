@@ -47,5 +47,10 @@ namespace test_siberix
             InitialCities();
             InitialRoads();
         }
+
+        private void GetOptimalRoute_button_Click(object sender, EventArgs e)
+        {
+            service.GetOptimalRoute(Convert.ToInt32(IdTextBox.Text));
+        }
     }
 }
