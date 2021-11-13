@@ -32,9 +32,16 @@ namespace test_siberix
 
         public void InitialRoads()
         {
-            repository.AddRoad(1, 2, 15);
-            repository.AddRoad(1, 3, 20);
-            repository.AddRoad(2, 1, 15);
+            try
+            {
+                repository.AddRoad(1, 2, 15);
+                repository.AddRoad(1, 3, 20);
+                repository.AddRoad(2, 1, 15);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void GetRepositoryInfo_Button_Click(object sender, EventArgs e)
