@@ -16,7 +16,7 @@ namespace test_siberix.Model
 
         public City City { get; set; }
         public ushort Distance { get; set; }
-
+        
         public override string ToString()
         {
             return City.Id.ToString() + " " + Distance.ToString();
