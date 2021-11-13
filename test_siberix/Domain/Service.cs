@@ -24,6 +24,7 @@ namespace test_siberix.Domain
         {
             uint OptimalRoutLength = 0;
             List<int> RouteCitiesIds = new List<int>();
+
             City inputCity = repository.GetCityById(_id);
 
             //recursive traversal
