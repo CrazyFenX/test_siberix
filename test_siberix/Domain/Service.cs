@@ -23,45 +23,51 @@ namespace test_siberix.Domain
 
         public ReturnStruct GetOptimalRoute(int _id)
         {
-            uint OptimalRoutLength = 0;
             List<int> RouteCitiesIds = new List<int>();
 
             City inputCity = repository.GetCityById(_id);
             returnStructList = new List<ReturnStruct>();
 
-            if (inputCity.IsStock) return new ReturnStruct(inputCity.Id, OptimalRoutLength, RouteCitiesIds.ToArray(), inputCity.IsStock);
-
-            List<int>[] resultMass = new List<int>[inputCity.NearbyCities.Count];
-            uint[] lengthsMass = new uint[inputCity.NearbyCities.Count];
-            for (int i = 0; i < inputCity.NearbyCities.Count; i++)
-            {
-                resultMass[i] = new List<int>();
-                lengthsMass[i] = inputCity.NearbyCities[i].Distance;
-                returnStructList.Add(RecursiveTraversal(inputCity.NearbyCities[i].City, lengthsMass[i], resultMass[i]));
-            }
+            RecursiveTraversal(inputCity, 0, RouteCitiesIds);
 
             string retStr = "";
+            uint OptimalRoutLength = returnStructList[0].RouteLength;
+            ReturnStruct OptimalRetStruct = new ReturnStruct();
+
             foreach (ReturnStruct tempRetStruct in returnStructList)
             {
-                retStr += "Id: " + tempRetStruct.StockCityId.ToString() + "; RL: " + tempRetStruct.RouteLength + "; Is Stock: " + tempRetStruct.IsStock.ToString();
+                retStr += "Id: " + tempRetStruct.StockCityId.ToString() + "; RL: " + tempRetStruct.RouteLength + "; Is Stock: " + tempRetStruct.IsStock.ToString() + "\n";
+                if (tempRetStruct.IsStock && tempRetStruct.RouteLength <= OptimalRoutLength)
+                {
+                    //OptimalRoutLength = tempRetStruct.RouteLength;
+                    OptimalRetStruct = tempRetStruct;
+                }
             }
+            retStr += "\n\n";
+            retStr += "Id: " + OptimalRetStruct.StockCityId.ToString() + "; RL: " + OptimalRetStruct.RouteLength + "; Is Stock: " + OptimalRetStruct.IsStock.ToString();
 
             MessageBox.Show(retStr);
 
-            return new ReturnStruct(inputCity.Id, OptimalRoutLength, RouteCitiesIds.ToArray(), inputCity.IsStock);
-            //TODO #1: Cделать общий случай для поиска через рекурсию.
-            //TODO #2: Рекурсия возвращает ReturnStruct и записывает
-            //результат в статический List, из которого позже будет выбираться итоговый результат
+            return OptimalRetStruct;
         }
 
         ReturnStruct RecursiveTraversal(City _currentCity, uint _routeLength, List<int> _citiesIds)
         {
             if (_currentCity.NearbyCities.Count == 0 || _currentCity.IsStock) return new ReturnStruct(_currentCity.Id, _routeLength, _citiesIds.ToArray(), _currentCity.IsStock);
             
+            if (!_citiesIds.Contains(_currentCity.Id)) _citiesIds.Add(_currentCity.Id);
+            
             foreach (CityNode cityNode in _currentCity.NearbyCities)
             //for (int i = 0; i < _currentCity.NearbyCities.Count; i++)
             {
-                returnStructList.Add(RecursiveTraversal(cityNode.City, _routeLength, _citiesIds));
+                if (!_citiesIds.Contains(cityNode.City.Id))
+                {
+                    uint tempRouteLength = _routeLength + cityNode.Distance;
+                    List<int> tempListIds = new List<int>();
+                    tempListIds.AddRange(_citiesIds);
+                    //tempListIds.Add(cityNode.City.Id);
+                    returnStructList.Add(RecursiveTraversal(cityNode.City, tempRouteLength, tempListIds));
+                }
             }
             
             return new ReturnStruct();
@@ -81,8 +87,7 @@ namespace test_siberix.Domain
             RouteLength = _routeLength;
             CitiesIds = _citiesIds;
             IsStock = _isStock;
-            MessageBox.Show(StockCityId.ToString() + "; RL: " + RouteLength + "; Is Stock: " + IsStock.ToString());
-
+            //MessageBox.Show(StockCityId.ToString() + "; RL: " + RouteLength + "; Is Stock: " + IsStock.ToString());
         }
     }
 }
