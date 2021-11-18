@@ -9,12 +9,23 @@ using test_siberix.Model;
 namespace test_siberix.Domain
 {
     /// <summary>
-    /// Service class that describes basic City Class processing algorithms
+    /// Сервис, организующий основную логшику работы с классом City
     /// </summary>
     class Service
     {
+        /// <summary>
+        /// Репозиторий для временного хранения и обработки данных
+        /// </summary>
         Repository repository;
+        
+        /// <summary>
+        /// Список, который заполняется экземплярами ReturnStruct в процессе рекурсивного обхода графа
+        /// </summary>
         List<ReturnStruct> returnStructList = new List<ReturnStruct>();
+        
+        /// <summary>
+        /// Хранит в себе текущее значение минимальной длинны маршрута (изначально равно 0)
+        /// </summary>
         uint dynamicMinimalRouteLength = 0;
 
         public Service(Repository _repository)
@@ -45,8 +56,23 @@ namespace test_siberix.Domain
             }
             MessageBox.Show(GetReturnStructListString(returnStructList, OptimalRetStruct));
             return OptimalRetStruct;
+            /*
+            Алгоритм представляет собой рекурсивный обход графа.
+            Мы выбираем определенный узел и двигаемся по всем дорогам,
+            исходящим из этого узла.
+            Перейдя в новый узел, снова вызываем метод, но уже для вновь
+            открывшихся дорог. Если таких нет или мы оказались в городе
+            со складом, рекурсия прерывается.
+            */
         }
 
+        /// <summary>
+        /// Рекурсивный метод для Brute Force метода
+        /// </summary>
+        /// <param name="_currentCity"></param>
+        /// <param name="_routeLength"></param>
+        /// <param name="_citiesIds"></param>
+        /// <returns></returns>
         ReturnStruct RecursiveTraversalBruteForce(City _currentCity, uint _routeLength, List<int> _citiesIds)
         {
             if (_currentCity.NearbyCities.Count == 0 || _currentCity.IsStock) return new ReturnStruct(_currentCity.Id, _routeLength, _citiesIds.ToArray(), _currentCity.IsStock);
@@ -88,8 +114,20 @@ namespace test_siberix.Domain
             }
             MessageBox.Show(GetReturnStructListString(returnStructList, OptimalRetStruct));
             return OptimalRetStruct;
+            /*
+            Повышение оптимальности достигается тем, что рекурсивный метод вызывается только в том случае,
+            если длинна текущего маршрута не привышает минимальную длинну среди уже найденных маршрутов.
+            В случае, если маршрут всё ещё претендует на роль оптимального, алгоритм продолжит выполняться,
+            Иначе - в итоговый список будет записан незавершенный маршрут (в облике структуры ReturnStruct)
+            */
         }
 
+        /// <summary>
+        /// Рекурсивный метод для более оптимального метода
+        /// </summary>
+        /// <param name="_currentCity"></param>
+        /// <param name="_routeLength"></param>
+        /// <param name="_citiesIds"></param>
         void RecursiveTraversal(City _currentCity, uint _routeLength, List<int> _citiesIds)
         {
             if (_currentCity.IsStock)
@@ -121,7 +159,11 @@ namespace test_siberix.Domain
             if (returnStructList == null) return("graph reference is null");
             string retStr = "";
             foreach (ReturnStruct tempRetStruct in returnStructList)
+            {
                 retStr += "Id: " + tempRetStruct.FinalCityId.ToString() + "; Route length: " + tempRetStruct.RouteLength + "; Is stock: " + tempRetStruct.IsStock.ToString() + "\n";
+                for (int i = 0; i < tempRetStruct.CitiesIds.Length; i++)
+                    retStr += tempRetStruct.CitiesIds[i].ToString() + " ";
+            }
             retStr += "\n\n" + "Id: " + optimalRetStruct.FinalCityId.ToString() + "; RL: " + optimalRetStruct.RouteLength + "; Is Stock: " + optimalRetStruct.IsStock.ToString(); ;
             return retStr;
         }
@@ -129,9 +171,24 @@ namespace test_siberix.Domain
 
     struct ReturnStruct
     {
-        public int FinalCityId; //required
+        /// <summary>
+        /// Id финального города маршрута 
+        /// </summary>
+        public int FinalCityId;
+
+        /// <summary>
+        /// Длинна маршрута
+        /// </summary>
         public uint RouteLength;
+
+        /// <summary>
+        /// Массив городов, которые содержит маршрут
+        /// </summary>
         public int[] CitiesIds;
+
+        /// <summary>
+        /// Есть ли в финальном городе склад
+        /// </summary>
         public bool IsStock;
 
         public ReturnStruct(int _stockCityId, uint _routeLength, int[] _citiesIds, bool _isStock)

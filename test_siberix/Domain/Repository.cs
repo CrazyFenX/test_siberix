@@ -8,7 +8,7 @@ using test_siberix.Model;
 namespace test_siberix.Domain
 {
     /// <summary>
-    /// The service class that orginizing data access
+    /// Сервис, предназначенный для обработки и временного хранения данных
     /// </summary>
     public class Repository
     {
@@ -17,12 +17,12 @@ namespace test_siberix.Domain
             Cities = new List<City>();
         }
         /// <summary>
-        /// List of Cities
+        /// Список городов
         /// </summary>
         public List<City> Cities { get; set; }
 
         /// <summary>
-        /// Add City in the List of Cities
+        /// Добавлет город в репозиторий
         /// </summary>
         /// <param name="_city"></param>
         public void AddCity(City _city)
@@ -31,7 +31,7 @@ namespace test_siberix.Domain
         }
 
         /// <summary>
-        /// Remove City from the List of Cities
+        /// Удаляет город из репозитория
         /// </summary>
         /// <param name="_city"></param>
         public void RemoveCity(City _city)
@@ -40,7 +40,7 @@ namespace test_siberix.Domain
         }
 
         /// <summary>
-        /// Updates the element with id equals _city's id to _city
+        /// Обновляет город с id равным id переданного города 
         /// </summary>
         /// <param name="_city"></param>
         public void UpdateCity(City _city)
@@ -50,8 +50,8 @@ namespace test_siberix.Domain
         }
 
         /// <summary>
-        /// Finds and returns City by id.
-        /// Algorithm complexity: O(n)
+        /// Находит и возвращает Citi по Id
+        /// Сложность алгоритма: O(n)
         /// </summary>
         /// <param name="_id"></param>
         /// <returns></returns>
@@ -63,7 +63,7 @@ namespace test_siberix.Domain
         }
 
         /// <summary>
-        /// Adds a road from the city with id equal to _citySendingId to the city with id equal to _cityArrivalId with distance equal to _distance.
+        /// Добавляет дорогу из города с идентификатором, равным _citySendingId, в город с идентификатором, равным _cityArrivalId, с расстоянием между ними, равным _distance.
         /// </summary>
         /// <param name="_citySendingId"></param>
         /// <param name="_cityArrivalId"></param>

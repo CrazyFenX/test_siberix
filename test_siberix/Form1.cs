@@ -26,6 +26,9 @@ namespace test_siberix
             drawService = new DrawService(graphPictureBox.Width, graphPictureBox.Height);
         }
 
+        /// <summary>
+        /// Инициализирует честко определенные в коде тестовые данные о городах
+        /// </summary>
         public void InitialCities()
         {
             repository.AddCity(new City(1, false));
@@ -39,6 +42,9 @@ namespace test_siberix
             repository.AddCity(new City(9, true));
         }
 
+        /// <summary>
+        /// Инициализирует честко определенные в коде тестовые данные о дорогах
+        /// </summary>
         public void InitialRoads()
         {
             try
@@ -72,13 +78,22 @@ namespace test_siberix
                 MessageBox.Show(ex.Message);
             }
         }
-
+        /// <summary>
+        /// Делает возможным добавить новый город по нажатию на Picture Box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void newCityButton_Click(object sender, EventArgs e)
         {
             newCityButton.Enabled = false;
             isStockCheckBox.Enabled = true;
         }
 
+        /// <summary>
+        /// Добавляет новую дорогу в репозиторий(дублирует для двух городов) и в сервис отображения графа
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void newRoadButton_Click(object sender, EventArgs e)
         {
             newCityButton.Enabled = true;
@@ -106,11 +121,21 @@ namespace test_siberix
             }
         }
 
+        /// <summary>
+        /// Выводит в MessageBox информаию о текущем наполнении графа
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void GetRepositoryInfo_Button_Click(object sender, EventArgs e)
         {
             MessageBox.Show(repository.ToString());
         }
 
+        /// <summary>
+        /// Событие вызывающее методы инициализации и отображающее полученный граф
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void InitialData_Button_Click(object sender, EventArgs e)
         {
             try
@@ -128,6 +153,11 @@ namespace test_siberix
             }
         }
 
+        /// <summary>
+        /// Вызывает метод нахождения оптимального маршрута (Brute Force) класса Service
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void GetOptimalRoute_button_Click(object sender, EventArgs e)
         {
             try
@@ -140,6 +170,11 @@ namespace test_siberix
             }
         }
 
+        /// <summary>
+        /// Вызывает метод нахождения оптимального маршрута (более оптимальный) класса Service
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void GetOptimalRouteOptimal_button_Click(object sender, EventArgs e)
         {
             try
@@ -152,6 +187,11 @@ namespace test_siberix
             }
         }
 
+        /// <summary>
+        /// Осли нажата кнопка добавления нового города, добавляет город в указанную точку
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void graphPictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             if (!newCityButton.Enabled)
