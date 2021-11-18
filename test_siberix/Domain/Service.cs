@@ -15,79 +15,131 @@ namespace test_siberix.Domain
     {
         Repository repository;
         List<ReturnStruct> returnStructList = new List<ReturnStruct>();
+        uint dynamicMinimalRouteLength = 0;
 
         public Service(Repository _repository)
         {
             repository = _repository;
         }
 
-        public ReturnStruct GetOptimalRoute(int _id)
+        /// <summary>
+        /// Brute Force method
+        /// </summary>
+        /// <param name="_id"></param>
+        /// <returns></returns>
+        public ReturnStruct GetOptimalRouteBruteForce(int _id)
         {
             List<int> RouteCitiesIds = new List<int>();
-
             City inputCity = repository.GetCityById(_id);
             returnStructList = new List<ReturnStruct>();
 
-            RecursiveTraversal(inputCity, 0, RouteCitiesIds);
+            RecursiveTraversalBruteForce(inputCity, 0, RouteCitiesIds);
 
-            string retStr = "";
             uint OptimalRoutLength = returnStructList[0].RouteLength;
             ReturnStruct OptimalRetStruct = new ReturnStruct();
 
             foreach (ReturnStruct tempRetStruct in returnStructList)
             {
-                retStr += "Id: " + tempRetStruct.StockCityId.ToString() + "; RL: " + tempRetStruct.RouteLength + "; Is Stock: " + tempRetStruct.IsStock.ToString() + "\n";
                 if (tempRetStruct.IsStock && tempRetStruct.RouteLength <= OptimalRoutLength)
-                {
-                    //OptimalRoutLength = tempRetStruct.RouteLength;
                     OptimalRetStruct = tempRetStruct;
-                }
             }
-            retStr += "\n\n";
-            retStr += "Id: " + OptimalRetStruct.StockCityId.ToString() + "; RL: " + OptimalRetStruct.RouteLength + "; Is Stock: " + OptimalRetStruct.IsStock.ToString();
-
-            MessageBox.Show(retStr);
-
+            MessageBox.Show(GetReturnStructListString(returnStructList, OptimalRetStruct));
             return OptimalRetStruct;
         }
 
-        ReturnStruct RecursiveTraversal(City _currentCity, uint _routeLength, List<int> _citiesIds)
+        ReturnStruct RecursiveTraversalBruteForce(City _currentCity, uint _routeLength, List<int> _citiesIds)
         {
             if (_currentCity.NearbyCities.Count == 0 || _currentCity.IsStock) return new ReturnStruct(_currentCity.Id, _routeLength, _citiesIds.ToArray(), _currentCity.IsStock);
-            
             if (!_citiesIds.Contains(_currentCity.Id)) _citiesIds.Add(_currentCity.Id);
-            
             foreach (CityNode cityNode in _currentCity.NearbyCities)
-            //for (int i = 0; i < _currentCity.NearbyCities.Count; i++)
             {
                 if (!_citiesIds.Contains(cityNode.City.Id))
                 {
                     uint tempRouteLength = _routeLength + cityNode.Distance;
                     List<int> tempListIds = new List<int>();
                     tempListIds.AddRange(_citiesIds);
-                    //tempListIds.Add(cityNode.City.Id);
-                    returnStructList.Add(RecursiveTraversal(cityNode.City, tempRouteLength, tempListIds));
+                    returnStructList.Add(RecursiveTraversalBruteForce(cityNode.City, tempRouteLength, tempListIds));
                 }
             }
-            
-            return new ReturnStruct();
+            return new ReturnStruct(_currentCity.Id, _routeLength, _citiesIds.ToArray(), _currentCity.IsStock);
+        }
+
+        /// <summary>
+        /// More optimal method
+        /// </summary>
+        /// <param name="_id"></param>
+        /// <returns></returns>
+        public ReturnStruct GetOptimalRoute(int _id)
+        {
+            List<int> RouteCitiesIds = new List<int>();
+            City inputCity = repository.GetCityById(_id);
+            returnStructList = new List<ReturnStruct>();
+            dynamicMinimalRouteLength = 0;
+
+            RecursiveTraversal(inputCity, 0, RouteCitiesIds);
+
+            uint OptimalRoutLength = returnStructList[0].RouteLength;
+            ReturnStruct OptimalRetStruct = new ReturnStruct();
+
+            foreach (ReturnStruct tempRetStruct in returnStructList)
+            {
+                if (tempRetStruct.IsStock && tempRetStruct.RouteLength <= OptimalRoutLength)
+                    OptimalRetStruct = tempRetStruct;
+            }
+            MessageBox.Show(GetReturnStructListString(returnStructList, OptimalRetStruct));
+            return OptimalRetStruct;
+        }
+
+        void RecursiveTraversal(City _currentCity, uint _routeLength, List<int> _citiesIds)
+        {
+            if (_currentCity.IsStock)
+            {
+                if (_routeLength < dynamicMinimalRouteLength || dynamicMinimalRouteLength == 0) dynamicMinimalRouteLength = _routeLength;
+                //return new ReturnStruct(_currentCity.Id, _routeLength, _citiesIds.ToArray(), _currentCity.IsStock);
+                returnStructList.Add(new ReturnStruct(_currentCity.Id, _routeLength, _citiesIds.ToArray(), _currentCity.IsStock));
+                return;
+            }
+            if (!_citiesIds.Contains(_currentCity.Id)) _citiesIds.Add(_currentCity.Id);
+            foreach (CityNode cityNode in _currentCity.NearbyCities)
+            {
+                if (!_citiesIds.Contains(cityNode.City.Id))
+                {
+                    uint tempRouteLength = _routeLength + cityNode.Distance;
+                    if (tempRouteLength <= dynamicMinimalRouteLength || dynamicMinimalRouteLength == 0)
+                    {
+                        List<int> tempListIds = new List<int>();
+                        tempListIds.AddRange(_citiesIds);
+                        //returnStructList.Add(RecursiveTraversal(cityNode.City, tempRouteLength, tempListIds));
+                        RecursiveTraversal(cityNode.City, tempRouteLength, tempListIds);
+                    }
+                }
+            }
+        }
+
+        public static string GetReturnStructListString(List<ReturnStruct> returnStructList, ReturnStruct optimalRetStruct)
+        {
+            if (returnStructList == null) return("graph reference is null");
+            string retStr = "";
+            foreach (ReturnStruct tempRetStruct in returnStructList)
+                retStr += "Id: " + tempRetStruct.FinalCityId.ToString() + "; Route length: " + tempRetStruct.RouteLength + "; Is stock: " + tempRetStruct.IsStock.ToString() + "\n";
+            retStr += "\n\n" + "Id: " + optimalRetStruct.FinalCityId.ToString() + "; RL: " + optimalRetStruct.RouteLength + "; Is Stock: " + optimalRetStruct.IsStock.ToString(); ;
+            return retStr;
         }
     }
 
     struct ReturnStruct
     {
-        public int StockCityId; //required
+        public int FinalCityId; //required
         public uint RouteLength;
         public int[] CitiesIds;
         public bool IsStock;
 
         public ReturnStruct(int _stockCityId, uint _routeLength, int[] _citiesIds, bool _isStock)
         {
-            StockCityId = _stockCityId;
+            FinalCityId = _stockCityId;
             RouteLength = _routeLength;
             CitiesIds = _citiesIds;
             IsStock = _isStock;
-            //MessageBox.Show(StockCityId.ToString() + "; RL: " + RouteLength + "; Is Stock: " + IsStock.ToString());
         }
     }
 }
