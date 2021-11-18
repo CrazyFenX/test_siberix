@@ -16,11 +16,14 @@ namespace test_siberix
     {
         Repository repository;
         Service service;
+        DrawService drawService;
+
         public Form1()
         {
             repository = new Repository();
             service = new Service(repository);
             InitializeComponent();
+            drawService = new DrawService(graphPictureBox.Width, graphPictureBox.Height);
         }
 
         public void InitialCities()
@@ -70,6 +73,39 @@ namespace test_siberix
             }
         }
 
+        private void newCityButton_Click(object sender, EventArgs e)
+        {
+            newCityButton.Enabled = false;
+            isStockCheckBox.Enabled = true;
+        }
+
+        private void newRoadButton_Click(object sender, EventArgs e)
+        {
+            newCityButton.Enabled = true;
+            isStockCheckBox.Enabled = false;
+            try
+            {
+                if (repository.GetCityById((int)IdFirstNumericUpDown.Value).Id != -1 && repository.GetCityById((int)IdSecondNumericUpDown.Value).Id != -1 && (int)distanceNumericUpDown.Value > 0)
+                {
+                    repository.AddRoad((int)IdFirstNumericUpDown.Value, (int)IdSecondNumericUpDown.Value, (ushort)distanceNumericUpDown.Value);
+                    repository.AddRoad((int)IdSecondNumericUpDown.Value, (int)IdFirstNumericUpDown.Value, (ushort)distanceNumericUpDown.Value);
+                    drawService.EdgeViewList.Add(new View.EdgeView((int)IdFirstNumericUpDown.Value, (int)IdSecondNumericUpDown.Value, (ushort)distanceNumericUpDown.Value));
+                }
+                else
+                {
+                    MessageBox.Show("Один из городов или оба не найдены");
+                }
+
+                drawService.clearSheet();
+                drawService.drawALLGraph();
+                graphPictureBox.Image = drawService.GetBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         private void GetRepositoryInfo_Button_Click(object sender, EventArgs e)
         {
             MessageBox.Show(repository.ToString());
@@ -77,13 +113,72 @@ namespace test_siberix
 
         private void InitialData_Button_Click(object sender, EventArgs e)
         {
-            InitialCities();
-            InitialRoads();
+            try
+            {
+                InitialCities();
+                InitialRoads();
+                drawService.clearSheet();
+                drawService.InitialGraph(repository.Cities);
+                drawService.drawALLGraph();
+                graphPictureBox.Image = drawService.GetBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void GetOptimalRoute_button_Click(object sender, EventArgs e)
         {
-            service.GetOptimalRoute(Convert.ToInt32(IdTextBox.Text));
+            try
+            {
+                service.GetOptimalRouteBruteForce(Convert.ToInt32(targetCityIdNumericUpDown.Value));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void GetOptimalRouteOptimal_button_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                service.GetOptimalRoute(Convert.ToInt32(targetCityIdNumericUpDown.Value));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void graphPictureBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (!newCityButton.Enabled)
+            {
+                try
+                {
+                    int tmpId = repository.Cities.Count + 1;
+                    repository.AddCity(new City(tmpId, isStockCheckBox.Checked));
+                    drawService.NodeViewList.Add(new View.NodeView(tmpId, isStockCheckBox.Checked, e.X, e.Y));
+
+                    drawService.clearSheet();
+                    drawService.drawALLGraph();
+                    graphPictureBox.Image = drawService.GetBitmap();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            newCityButton.Enabled = true;
+            isStockCheckBox.Enabled = false;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            newCityButton.Enabled = true;
+            isStockCheckBox.Enabled = false;
         }
     }
 }
