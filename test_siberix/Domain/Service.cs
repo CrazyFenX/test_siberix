@@ -133,7 +133,6 @@ namespace test_siberix.Domain
             if (_currentCity.IsStock)
             {
                 if (_routeLength < dynamicMinimalRouteLength || dynamicMinimalRouteLength == 0) dynamicMinimalRouteLength = _routeLength;
-                //return new ReturnStruct(_currentCity.Id, _routeLength, _citiesIds.ToArray(), _currentCity.IsStock);
                 returnStructList.Add(new ReturnStruct(_currentCity.Id, _routeLength, _citiesIds.ToArray(), _currentCity.IsStock));
                 return;
             }
@@ -147,7 +146,6 @@ namespace test_siberix.Domain
                     {
                         List<int> tempListIds = new List<int>();
                         tempListIds.AddRange(_citiesIds);
-                        //returnStructList.Add(RecursiveTraversal(cityNode.City, tempRouteLength, tempListIds));
                         RecursiveTraversal(cityNode.City, tempRouteLength, tempListIds);
                     }
                 }
@@ -160,11 +158,13 @@ namespace test_siberix.Domain
             string retStr = "";
             foreach (ReturnStruct tempRetStruct in returnStructList)
             {
-                retStr += "Id: " + tempRetStruct.FinalCityId.ToString() + "; Route length: " + tempRetStruct.RouteLength + "; Is stock: " + tempRetStruct.IsStock.ToString() + "\n";
+                retStr += "Id: " + tempRetStruct.FinalCityId.ToString() + "; Route length: " + tempRetStruct.RouteLength + "; Is stock: " + tempRetStruct.IsStock.ToString() + "; ";
+                retStr += "In route cities Ids: ";
                 for (int i = 0; i < tempRetStruct.CitiesIds.Length; i++)
                     retStr += tempRetStruct.CitiesIds[i].ToString() + " ";
+                retStr += tempRetStruct.FinalCityId.ToString() + "\n";
             }
-            retStr += "\n\n" + "Id: " + optimalRetStruct.FinalCityId.ToString() + "; RL: " + optimalRetStruct.RouteLength + "; Is Stock: " + optimalRetStruct.IsStock.ToString(); ;
+            retStr += "\n\n" + "Id: " + optimalRetStruct.FinalCityId.ToString() + "; RL: " + optimalRetStruct.RouteLength + "; Is Stock: " + optimalRetStruct.IsStock.ToString() + "; ";
             return retStr;
         }
     }
