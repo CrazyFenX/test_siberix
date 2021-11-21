@@ -111,8 +111,8 @@ namespace test_siberix
                     MessageBox.Show("Один из городов или оба не найдены");
                 }
 
-                drawService.clearSheet();
-                drawService.drawALLGraph();
+                drawService.ClearSheet();
+                drawService.DrawALLGraph();
                 graphPictureBox.Image = drawService.GetBitmap();
             }
             catch (Exception ex)
@@ -142,9 +142,9 @@ namespace test_siberix
             {
                 InitialCities();
                 InitialRoads();
-                drawService.clearSheet();
+                drawService.ClearSheet();
                 drawService.InitialGraph(repository.Cities);
-                drawService.drawALLGraph();
+                drawService.DrawALLGraph();
                 graphPictureBox.Image = drawService.GetBitmap();
             }
             catch (Exception ex)
@@ -160,9 +160,11 @@ namespace test_siberix
         /// <param name="e"></param>
         private void GetOptimalRoute_button_Click(object sender, EventArgs e)
         {
+            ReturnStruct result = new ReturnStruct();
             try
             {
-                service.GetOptimalRouteBruteForce(Convert.ToInt32(targetCityIdNumericUpDown.Value));
+                result = service.GetOptimalRouteBruteForce(Convert.ToInt32(targetCityIdNumericUpDown.Value));
+                drawService.DrawRoute(result.CitiesIds);
             }
             catch (Exception ex)
             {
@@ -177,9 +179,17 @@ namespace test_siberix
         /// <param name="e"></param>
         private void GetOptimalRouteOptimal_button_Click(object sender, EventArgs e)
         {
+            ReturnStruct result = new ReturnStruct();
             try
             {
-                service.GetOptimalRoute(Convert.ToInt32(targetCityIdNumericUpDown.Value));
+                result = service.GetOptimalRoute(Convert.ToInt32(targetCityIdNumericUpDown.Value));
+                string retStr = "";
+                for (int i = 0; i < result.CitiesIds.Length; i++)
+                {
+                    retStr += result.CitiesIds[i].ToString() + " ";
+                }
+                MessageBox.Show(retStr);
+                drawService.DrawRoute(result.CitiesIds);
             }
             catch (Exception ex)
             {
@@ -202,8 +212,8 @@ namespace test_siberix
                     repository.AddCity(new City(tmpId, isStockCheckBox.Checked));
                     drawService.NodeViewList.Add(new View.NodeView(tmpId, isStockCheckBox.Checked, e.X, e.Y));
 
-                    drawService.clearSheet();
-                    drawService.drawALLGraph();
+                    drawService.ClearSheet();
+                    drawService.DrawALLGraph();
                     graphPictureBox.Image = drawService.GetBitmap();
                 }
                 catch (Exception ex)
