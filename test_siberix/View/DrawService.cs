@@ -29,11 +29,11 @@ namespace test_siberix.Domain
         {
             bitmap = new Bitmap(width, height);
             gr = Graphics.FromImage(bitmap);
-            clearSheet();
+            ClearSheet();
             blackPen = new Pen(Color.Black);
             blackPen.Width = 2;
             redPen = new Pen(Color.Red);
-            redPen.Width = 2;
+            redPen.Width = 5;
             darkGoldPen = new Pen(Color.DarkGoldenrod);
             darkGoldPen.Width = 2;
             fo = new Font("Arial", 15);
@@ -45,12 +45,12 @@ namespace test_siberix.Domain
             return bitmap;
         }
 
-        public void clearSheet()
+        public void ClearSheet()
         {
             gr.Clear(Color.White);
         }
 
-        public void drawVertex(NodeView _inputNode)
+        public void DrawVertex(NodeView _inputNode)
         {
             var brush = Brushes.White;
             if (_inputNode.IsSrock) brush = Brushes.Orange;
@@ -60,33 +60,40 @@ namespace test_siberix.Domain
             gr.DrawString(_inputNode.Id.ToString(), fo, br, point);
         }
 
-        public void drawSelectedVertex(int x, int y)
+        public void DrawSelectedVertex(int x, int y)
         {
             gr.DrawEllipse(redPen, (x - R), (y - R), 2 * R, 2 * R);
         }
 
-        public void drawEdge(NodeView V1, NodeView V2, EdgeView E, int numberE)
+        public void DrawEdge(EdgeView _inputEdge, Pen _pen) //TODO: упростить вызов метода, уменьшив количество параметров
         {
-            gr.DrawLine(darkGoldPen, V1.X, V1.Y, V2.X, V2.Y);
-            point = new PointF((V1.X + V2.X) / 2, (V1.Y + V2.Y) / 2);
-            gr.DrawString(E.Distance.ToString(), fo, br, point);
-            drawVertex(V1);
-            drawVertex(V2);
+            //gr.DrawLine(darkGoldPen, V1.X, V1.Y, V2.X, V2.Y);
+            //point = new PointF((V1.X + V2.X) / 2, (V1.Y + V2.Y) / 2);
+            //gr.DrawString(E.Distance.ToString(), fo, br, point);
+
+            gr.DrawLine(darkGoldPen, NodeViewList[_inputEdge.NodeId1 - 1].X, NodeViewList[_inputEdge.NodeId1 - 1].Y, NodeViewList[_inputEdge.NodeId2 - 1].X, NodeViewList[_inputEdge.NodeId2 - 1].Y);
+            point = new PointF((NodeViewList[_inputEdge.NodeId1 - 1].X + NodeViewList[_inputEdge.NodeId2 - 1].X) / 2, (NodeViewList[_inputEdge.NodeId1 - 1].Y + NodeViewList[_inputEdge.NodeId2 - 1].Y) / 2);
+            gr.DrawString(_inputEdge.Distance.ToString(), fo, br, point);
+
+            DrawVertex(NodeViewList[_inputEdge.NodeId1 - 1]);
+            DrawVertex(NodeViewList[_inputEdge.NodeId2 - 1]);
         }
 
-        public void drawALLGraph()
+        public void DrawALLGraph()
         {
             //рисуем ребра
-            for (int i = 0; i < EdgeViewList.Count; i++)
+            //for (int i = 0; i < EdgeViewList.Count; i++)
+            foreach(var edgeItem in EdgeViewList)
             {
-                gr.DrawLine(darkGoldPen, NodeViewList[EdgeViewList[i].NodeId1 - 1].X, NodeViewList[EdgeViewList[i].NodeId1 - 1].Y, NodeViewList[EdgeViewList[i].NodeId2 - 1].X, NodeViewList[EdgeViewList[i].NodeId2 - 1].Y);
-                point = new PointF((NodeViewList[EdgeViewList[i].NodeId1 - 1].X + NodeViewList[EdgeViewList[i].NodeId2 - 1].X) / 2, (NodeViewList[EdgeViewList[i].NodeId1 - 1].Y + NodeViewList[EdgeViewList[i].NodeId2 - 1].Y) / 2);
-                gr.DrawString(EdgeViewList[i].Distance.ToString(), fo, br, point);
+                //gr.DrawLine(darkGoldPen, NodeViewList[EdgeViewList[i].NodeId1 - 1].X, NodeViewList[EdgeViewList[i].NodeId1 - 1].Y, NodeViewList[EdgeViewList[i].NodeId2 - 1].X, NodeViewList[EdgeViewList[i].NodeId2 - 1].Y);
+                //point = new PointF((NodeViewList[EdgeViewList[i].NodeId1 - 1].X + NodeViewList[EdgeViewList[i].NodeId2 - 1].X) / 2, (NodeViewList[EdgeViewList[i].NodeId1 - 1].Y + NodeViewList[EdgeViewList[i].NodeId2 - 1].Y) / 2);
+                //gr.DrawString(EdgeViewList[i].Distance.ToString(), fo, br, point);
+                DrawEdge(edgeItem, darkGoldPen);
             }
             //рисуем вершины
             foreach(var nodeItem in NodeViewList)
             {
-                drawVertex(nodeItem);
+                DrawVertex(nodeItem);
             }
         }
 
@@ -104,6 +111,14 @@ namespace test_siberix.Domain
                 {
                     EdgeViewList.Add(new EdgeView(cityItem.Id, cityNodeItem.City.Id, cityNodeItem.Distance));
                 }
+            }
+        }
+
+        public void DrawRoute(int[] inputCityIds)
+        {
+            for (int i = 1; i < inputCityIds.Length; i++)
+            {
+                gr.DrawLine(redPen, NodeViewList[inputCityIds[i] - 1].X, NodeViewList[inputCityIds[i] - 1].Y, NodeViewList[inputCityIds[i - 1] - 1].X, NodeViewList[inputCityIds[i - 1] - 1].Y);
             }
         }
     }
