@@ -46,6 +46,7 @@ namespace test_siberix
             this.button1 = new System.Windows.Forms.Button();
             this.graphPictureBox = new System.Windows.Forms.PictureBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.clearButton = new System.Windows.Forms.Button();
             this.distanceNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.targetCityIdNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.IdSecondNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -71,7 +72,7 @@ namespace test_siberix
             // 
             this.GetInfo_button.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.GetInfo_button.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.GetInfo_button.Location = new System.Drawing.Point(46, 667);
+            this.GetInfo_button.Location = new System.Drawing.Point(46, 760);
             this.GetInfo_button.Name = "GetInfo_button";
             this.GetInfo_button.Size = new System.Drawing.Size(149, 51);
             this.GetInfo_button.TabIndex = 0;
@@ -150,9 +151,9 @@ namespace test_siberix
             this.label11.AutoSize = true;
             this.label11.Location = new System.Drawing.Point(179, 916);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(558, 20);
+            this.label11.Size = new System.Drawing.Size(569, 20);
             this.label11.TabIndex = 18;
-            this.label11.Text = "Программа выполнена в качестве тестового задания для компании Сибирикс";
+            this.label11.Text = "Программа разработана в качестве тестового задания для компании Сибирикс";
             // 
             // label10
             // 
@@ -218,7 +219,7 @@ namespace test_siberix
             this.button2.Location = new System.Drawing.Point(349, 743);
             this.button2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(88, 31);
+            this.button2.Size = new System.Drawing.Size(103, 31);
             this.button2.TabIndex = 8;
             this.button2.Text = "Is not Stock";
             this.button2.UseVisualStyleBackColor = false;
@@ -252,6 +253,7 @@ namespace test_siberix
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.clearButton);
             this.panel2.Controls.Add(this.distanceNumericUpDown);
             this.panel2.Controls.Add(this.targetCityIdNumericUpDown);
             this.panel2.Controls.Add(this.IdSecondNumericUpDown);
@@ -274,6 +276,18 @@ namespace test_siberix
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(248, 961);
             this.panel2.TabIndex = 7;
+            // 
+            // clearButton
+            // 
+            this.clearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.clearButton.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.clearButton.Location = new System.Drawing.Point(46, 666);
+            this.clearButton.Name = "clearButton";
+            this.clearButton.Size = new System.Drawing.Size(149, 51);
+            this.clearButton.TabIndex = 18;
+            this.clearButton.Text = "Clear";
+            this.clearButton.UseVisualStyleBackColor = true;
+            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
             // distanceNumericUpDown
             // 
@@ -444,6 +458,7 @@ namespace test_siberix
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Button clearButton;
     }
 }
 

@@ -31,15 +31,22 @@ namespace test_siberix
         /// </summary>
         public void InitialCities()
         {
-            repository.AddCity(new City(1, false));
-            repository.AddCity(new City(2, true));
-            repository.AddCity(new City(3, true));
-            repository.AddCity(new City(4, false));
-            repository.AddCity(new City(5, false));
-            repository.AddCity(new City(6, true));
-            repository.AddCity(new City(7, false));
-            repository.AddCity(new City(8, false));
-            repository.AddCity(new City(9, true));
+            try
+            {
+                repository.AddCity(new City(1, false));
+                repository.AddCity(new City(2, true));
+                repository.AddCity(new City(3, true));
+                repository.AddCity(new City(4, false));
+                repository.AddCity(new City(5, false));
+                repository.AddCity(new City(6, true));
+                repository.AddCity(new City(7, false));
+                repository.AddCity(new City(8, false));
+                repository.AddCity(new City(9, true));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         /// <summary>
@@ -128,7 +135,14 @@ namespace test_siberix
         /// <param name="e"></param>
         private void GetRepositoryInfo_Button_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(repository.ToString());
+            try
+            {
+                MessageBox.Show(repository.ToString());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         /// <summary>
@@ -165,6 +179,7 @@ namespace test_siberix
             {
                 result = service.GetOptimalRouteBruteForce(Convert.ToInt32(targetCityIdNumericUpDown.Value));
                 drawService.DrawRoute(result.CitiesIds);
+                graphPictureBox.Image = drawService.GetBitmap();
             }
             catch (Exception ex)
             {
@@ -183,13 +198,8 @@ namespace test_siberix
             try
             {
                 result = service.GetOptimalRoute(Convert.ToInt32(targetCityIdNumericUpDown.Value));
-                string retStr = "";
-                for (int i = 0; i < result.CitiesIds.Length; i++)
-                {
-                    retStr += result.CitiesIds[i].ToString() + " ";
-                }
-                MessageBox.Show(retStr);
                 drawService.DrawRoute(result.CitiesIds);
+                graphPictureBox.Image = drawService.GetBitmap();
             }
             catch (Exception ex)
             {
@@ -229,6 +239,22 @@ namespace test_siberix
         {
             newCityButton.Enabled = true;
             isStockCheckBox.Enabled = false;
+        }
+
+        private void clearButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                drawService.ClearSheet();
+                repository = new Repository();
+                service = new Service(repository);
+                drawService = new DrawService(graphPictureBox.Width, graphPictureBox.Height);
+                graphPictureBox.Image = drawService.GetBitmap();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

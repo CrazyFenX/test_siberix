@@ -75,8 +75,8 @@ namespace test_siberix.Domain
         /// <returns></returns>
         ReturnStruct RecursiveTraversalBruteForce(City _currentCity, uint _routeLength, List<int> _citiesIds)
         {
-            if (_currentCity.NearbyCities.Count == 0 || _currentCity.IsStock) return new ReturnStruct(_currentCity.Id, _routeLength, _citiesIds.ToArray(), _currentCity.IsStock);
             if (!_citiesIds.Contains(_currentCity.Id)) _citiesIds.Add(_currentCity.Id);
+            if (_currentCity.NearbyCities.Count == 0 || _currentCity.IsStock) return new ReturnStruct(_currentCity.Id, _routeLength, _citiesIds.ToArray(), _currentCity.IsStock);
             foreach (CityNode cityNode in _currentCity.NearbyCities)
             {
                 if (!_citiesIds.Contains(cityNode.City.Id))
@@ -130,13 +130,13 @@ namespace test_siberix.Domain
         /// <param name="_citiesIds"></param>
         void RecursiveTraversal(City _currentCity, uint _routeLength, List<int> _citiesIds)
         {
+            if (!_citiesIds.Contains(_currentCity.Id)) _citiesIds.Add(_currentCity.Id);
             if (_currentCity.IsStock)
             {
                 if (_routeLength < dynamicMinimalRouteLength || dynamicMinimalRouteLength == 0) dynamicMinimalRouteLength = _routeLength;
                 returnStructList.Add(new ReturnStruct(_currentCity.Id, _routeLength, _citiesIds.ToArray(), _currentCity.IsStock));
                 return;
             }
-            if (!_citiesIds.Contains(_currentCity.Id)) _citiesIds.Add(_currentCity.Id);
             foreach (CityNode cityNode in _currentCity.NearbyCities)
             {
                 if (!_citiesIds.Contains(cityNode.City.Id))
@@ -162,7 +162,7 @@ namespace test_siberix.Domain
                 retStr += "In route cities Ids: ";
                 for (int i = 0; i < tempRetStruct.CitiesIds.Length; i++)
                     retStr += tempRetStruct.CitiesIds[i].ToString() + " ";
-                retStr += tempRetStruct.FinalCityId.ToString() + "\n";
+                retStr += "\n";
             }
             retStr += "\n\n" + "Id: " + optimalRetStruct.FinalCityId.ToString() + "; RL: " + optimalRetStruct.RouteLength + "; Is Stock: " + optimalRetStruct.IsStock.ToString() + "; ";
             return retStr;
