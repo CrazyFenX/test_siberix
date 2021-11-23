@@ -67,10 +67,6 @@ namespace test_siberix.Domain
 
         public void DrawEdge(EdgeView _inputEdge, Pen _pen) //TODO: упростить вызов метода, уменьшив количество параметров
         {
-            //gr.DrawLine(darkGoldPen, V1.X, V1.Y, V2.X, V2.Y);
-            //point = new PointF((V1.X + V2.X) / 2, (V1.Y + V2.Y) / 2);
-            //gr.DrawString(E.Distance.ToString(), fo, br, point);
-
             gr.DrawLine(darkGoldPen, NodeViewList[_inputEdge.NodeId1 - 1].X, NodeViewList[_inputEdge.NodeId1 - 1].Y, NodeViewList[_inputEdge.NodeId2 - 1].X, NodeViewList[_inputEdge.NodeId2 - 1].Y);
             point = new PointF((NodeViewList[_inputEdge.NodeId1 - 1].X + NodeViewList[_inputEdge.NodeId2 - 1].X) / 2, (NodeViewList[_inputEdge.NodeId1 - 1].Y + NodeViewList[_inputEdge.NodeId2 - 1].Y) / 2);
             gr.DrawString(_inputEdge.Distance.ToString(), fo, br, point);
@@ -85,9 +81,6 @@ namespace test_siberix.Domain
             //for (int i = 0; i < EdgeViewList.Count; i++)
             foreach(var edgeItem in EdgeViewList)
             {
-                //gr.DrawLine(darkGoldPen, NodeViewList[EdgeViewList[i].NodeId1 - 1].X, NodeViewList[EdgeViewList[i].NodeId1 - 1].Y, NodeViewList[EdgeViewList[i].NodeId2 - 1].X, NodeViewList[EdgeViewList[i].NodeId2 - 1].Y);
-                //point = new PointF((NodeViewList[EdgeViewList[i].NodeId1 - 1].X + NodeViewList[EdgeViewList[i].NodeId2 - 1].X) / 2, (NodeViewList[EdgeViewList[i].NodeId1 - 1].Y + NodeViewList[EdgeViewList[i].NodeId2 - 1].Y) / 2);
-                //gr.DrawString(EdgeViewList[i].Distance.ToString(), fo, br, point);
                 DrawEdge(edgeItem, darkGoldPen);
             }
             //рисуем вершины
